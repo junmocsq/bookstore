@@ -1,6 +1,8 @@
 package book
 
 import (
+	"errors"
+
 	"github.com/junmocsq/bookstore/api/models/common"
 	"github.com/sirupsen/logrus"
 )
@@ -26,6 +28,13 @@ func NewCategory() *Category {
 }
 
 func (c *Category) Add(name string, pid int32, idx int32) (int32, error) {
+	// 一级分类不能重复
+	if pid == 0 {
+		if c.GetByName(name) != nil {
+			return 0, errors.New("一级分类不能重复")
+		}
+	}
+
 	var category = Category{Name: name, Pid: pid, Idx: idx}
 	var db = common.GetDB()
 	stmt := db.DryRun().Select("Name", "Pid", "Idx").Create(&category).Statement
@@ -49,9 +58,9 @@ func (c *Category) Update(id int32, name string, pid int32, idx int32, status in
 	return int32(n)
 }
 
-func (c *Category) GetAll() []*Category {
+func (c *Category) GetAll() []Category {
 	var db = common.GetDB()
-	var categories []*Category
+	var categories []Category
 	stmt := db.DryRun().Find(&categories).Statement
 	err := db.SetTag(c.Tag()).PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&categories)
 	if err != nil {
@@ -68,6 +77,18 @@ func (c *Category) GetById(id int32) *Category {
 	err := db.SetTag(c.Tag()).PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&category)
 	if err != nil {
 		logrus.WithField("model", "category_GetById").Error(err)
+		return nil
+	}
+	return &category
+}
+
+func (c *Category) GetByName(name string) *Category {
+	var db = common.GetDB()
+	var category Category
+	stmt := db.DryRun().Where("name = ? and pid = 0", name).First(&category).Statement
+	err := db.SetTag(c.Tag()).PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&category)
+	if err != nil {
+		logrus.WithField("model", "category_GetByName").Error(err)
 		return nil
 	}
 	return &category

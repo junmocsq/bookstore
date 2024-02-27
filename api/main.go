@@ -9,6 +9,8 @@ import (
 	_ "github.com/junmocsq/bookstore/api/docs" // 千万不要忘了导入把你上一步生成的docs
 	"github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+
+	_ "github.com/junmocsq/bookstore/api/scripts"
 )
 
 //	@title			图书阅读器 API
