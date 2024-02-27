@@ -13,7 +13,7 @@ type Chapter struct {
 }
 
 func (c *Chapter) TableName() string {
-	return "u_chapters"
+	return "b_chapters"
 }
 
 func (c *Chapter) Tag(bid int32) string {
