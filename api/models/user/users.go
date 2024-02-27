@@ -2,11 +2,11 @@ package user
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/junmocsq/bookstore/api/models/common"
 	"github.com/junmocsq/bookstore/api/tools"
 	"github.com/sirupsen/logrus"
-	"gorm.io/gorm"
 )
 
 type User struct {
@@ -31,6 +31,13 @@ func (u *User) TableName() string {
 	return "u_users"
 }
 
+func (u *User) Tag() string {
+	return "u_users"
+}
+func (u *User) Key(id int32) string {
+	return fmt.Sprintf("%d", id)
+}
+
 func NewUser() *User {
 	return &User{}
 }
@@ -47,12 +54,13 @@ func (u *User) add(nickname, account, passwd, salt, profile, phone, nationCode, 
 	u.Email = email
 	u.Gender = gender
 	var db = common.GetDB()
-	res := db.Create(u)
-	if res.Error != nil {
-		logrus.WithField("model", "user_add").Error(res.Error)
+	stmt := db.DryRun().Create(u).Statement
+	n, err := db.SetTag(u.Tag()).PrepareSql(stmt.SQL.String(), stmt.Vars...).Create(u)
+	if err != nil {
+		logrus.WithField("model", "user_add").Error(err)
 		return 0, errors.New("添加失败")
 	}
-	return u.ID, nil
+	return int32(n), nil
 }
 
 // 电话注册
@@ -63,6 +71,7 @@ func (u *User) PhoneSignUp(phone, nationCode string) (int32, error) {
 		if u.GetByAccount(account) == nil {
 			break
 		}
+		logrus.Warn(u.GetByAccount(account))
 		account = tools.CreateRandomString(15)
 	}
 	passwd := tools.CreateRandomString(15)
@@ -93,64 +102,55 @@ func (u *User) EmailSignUp(email, passwd string) (int32, error) {
 }
 
 func (u *User) Update() int32 {
-	var db = common.GetDB()
-	res := db.Save(u)
-	if res.Error != nil {
-		logrus.WithField("model", "user_update").Error(res.Error)
-		return 0
-	}
-	return int32(res.RowsAffected)
+
+	return 0
 }
 
 func (u *User) GetById(id int32) *User {
 	var db = common.GetDB()
-	var ret User
-	res := db.First(&ret, id)
-	if res.Error != nil {
-		if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
-			logrus.WithField("model", "user_get").Error(res.Error)
-		}
+	var user User
+	stmt := db.DryRun().Where("id =?", id).First(&user).Statement
+	err := db.SetTag(u.Tag()).SetKey(u.Key(id)).PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&user)
+	if err != nil {
+		logrus.WithField("model", "user_GetById").Error(err)
 		return nil
 	}
-	return &ret
+	return &user
 }
 
 func (u *User) GetByAccount(account string) *User {
 	var db = common.GetDB()
-	var ret User
-	res := db.Where("account =?", account).First(&ret)
-	if res.Error != nil {
-		if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
-			logrus.WithField("model", "user_get_by_account").Error(res.Error)
-		}
+	var user User
+	stmt := db.DryRun().Where("account =?", account).Find(&user).Statement
+	err := db.SetTag(u.Tag()).PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&user)
+	if err != nil {
+		logrus.WithField("model", "user_GetByAccount").Error(err)
 		return nil
 	}
-	return &ret
+	return &user
 }
 
 // 获取用户信息
 func (u *User) GetByPhone(phone, nationCode string) *User {
 	var db = common.GetDB()
-	var ret User
-	res := db.Where("phone =? and nation_code =?", phone, nationCode).First(&ret)
-	if res.Error != nil {
-		if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
-			logrus.WithField("model", "user_get_by_phone").Error(res.Error)
-		}
+	var user User
+	stmt := db.DryRun().Where("phone =? and nation_code =?", phone, nationCode).First(&user).Statement
+	err := db.SetTag(u.Tag()).PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&user)
+	if err != nil {
+		logrus.WithField("model", "user_GetByPhone").Error(err)
 		return nil
 	}
-	return &ret
+	return &user
 }
 
 func (u *User) GetByEmail(email string) *User {
 	var db = common.GetDB()
-	var ret User
-	res := db.Where("email =?", email).First(&ret)
-	if res.Error != nil {
-		if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
-			logrus.WithField("model", "user_get_email").Error(res.Error)
-		}
+	var user User
+	stmt := db.DryRun().Where("email =?", email).First(&user).Statement
+	err := db.SetTag(u.Tag()).PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&user)
+	if err != nil {
+		logrus.WithField("model", "user_GetByAccount").Error(err)
 		return nil
 	}
-	return &ret
+	return &user
 }

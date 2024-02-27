@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	common.GetDB().AutoMigrate(&user.User{})
+	common.GetDB().DB().AutoMigrate(&user.User{})
 
-	common.GetDB().AutoMigrate(&book.Bookmark{}, &book.Book{}, &book.Category{}, &book.Chapter{}, &book.Content{}, &book.Section{}, &book.Tag{})
+	common.GetDB().DB().AutoMigrate(&user.Bookmark{}, &book.Book{}, &book.Category{}, &book.Chapter{}, &book.Content{}, &book.Section{}, &book.Tag{})
 }

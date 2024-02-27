@@ -1,11 +1,10 @@
 package book
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/junmocsq/bookstore/api/models/common"
 	"github.com/sirupsen/logrus"
-	"gorm.io/gorm"
 )
 
 type Book struct {
@@ -35,6 +34,10 @@ func (b *Book) TableName() string {
 	return "b_books"
 }
 
+func (b *Book) Tag(id int32) string {
+	return fmt.Sprintf("b_books_%d", id)
+}
+
 func NewBook() *Book {
 	return &Book{}
 }
@@ -47,11 +50,10 @@ func (b *Book) Add() (int32, error) {
 func (b *Book) GetById(id int32) *Book {
 	var book Book
 	var db = common.GetDB()
-	res := db.First(&book, id)
-	if res.Error != nil {
-		if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
-			logrus.WithField("model", "book_GetById").Error(res.Error)
-		}
+	stmt := db.DryRun().Where("id =?", id).Find(&book).Statement
+	err := db.SetTag(b.Tag(id)).PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&book)
+	if err != nil {
+		logrus.WithField("model", "book_GetById").Error(err)
 		return nil
 	}
 	return &book
@@ -60,11 +62,10 @@ func (b *Book) GetById(id int32) *Book {
 func (b *Book) GetByAid(aid int32, page, size int) []*Book {
 	var db = common.GetDB()
 	var books []*Book
-	res := db.Where("aid =?", aid).Limit(size).Offset((page - 1) * size).Order("id desc").Find(&books)
-	if res.Error != nil {
-		if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
-			logrus.WithField("model", "book_GetByAid").Error(res.Error)
-		}
+	stmt := db.DryRun().Where("aid =?", aid).Find(&books).Statement
+	err := db.PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&books)
+	if err != nil {
+		logrus.WithField("model", "book_GetByAid").Error(err)
 		return nil
 	}
 	return books

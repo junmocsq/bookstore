@@ -1,23 +1,15 @@
 package common
 
 import (
-	"database/sql"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"github.com/junmocsq/jlib/dbcache"
 	"time"
 )
 
-var sqlDB *sql.DB
-var db *gorm.DB
-
 func init() {
-	var err error
-	db, err = gorm.Open(mysql.Open("work:123456@tcp(192.168.3.103:3306)/bookstore"), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
-	}
+	dsn := "work:123456@tcp(192.168.3.103:3306)/bookstore?charset=utf8mb4&parseTime=True&loc=Local"
+	dbcache.RegisterDb(dsn, "bookstore", true)
 
-	sqlDB, err = db.DB()
+	sqlDB, err := GetDB().DB().DB()
 	if err != nil {
 		panic("failed to get sqlDB")
 	}
@@ -30,8 +22,10 @@ func init() {
 	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
+	dbcache.RedisCacheInit("192.168.3.103", "6379", "")
+
 }
 
-func GetDB() *gorm.DB {
-	return db
+func GetDB(dbname ...string) *dbcache.Dao {
+	return dbcache.NewDb(dbname...)
 }
