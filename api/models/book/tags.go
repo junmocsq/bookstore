@@ -5,6 +5,7 @@ import (
 
 	"github.com/junmocsq/bookstore/api/models/common"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 type Tag struct {
@@ -72,7 +73,9 @@ func (t *Tag) GetById(id int32) *Tag {
 	stmt := db.DryRun().Where("id = ?", id).First(&tag).Statement
 	err := db.SetTag(t.Tag()).PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&tag)
 	if err != nil {
-		logrus.WithField("model", "tag_GetById").Error(err)
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			logrus.WithField("model", "tag_GetById").Error(err)
+		}
 		return nil
 	}
 	return &tag
@@ -81,10 +84,12 @@ func (t *Tag) GetById(id int32) *Tag {
 func (t *Tag) GetByName(name string) *Tag {
 	var db = common.GetDB()
 	var tag Tag
-	stmt := db.DryRun().Where("name = ?", name).First(&tag).Statement
+	stmt := db.DryRun().Where("name = ?", name).Find(&tag).Statement
 	err := db.SetTag(t.Tag()).PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&tag)
 	if err != nil {
-		logrus.WithField("model", "tag_GetByNamed").Error(err)
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			logrus.WithField("model", "tag_GetByNamed").Error(err)
+		}
 		return nil
 	}
 	return &tag

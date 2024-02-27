@@ -20,6 +20,7 @@ func init() {
 
 	// dsn := "work:123456@tcp(192.168.3.103:3306)/bookstore?charset=utf8mb4&parseTime=True&loc=Local"
 	dbcache.RegisterDb(dsn, dbname, true)
+	// dbcache.Debug(true)
 
 	sqlDB, err := GetDB().DB().DB()
 	if err != nil {
