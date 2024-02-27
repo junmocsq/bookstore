@@ -1,3 +1,4 @@
+// 书签表
 package user
 
 import (

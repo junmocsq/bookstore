@@ -19,11 +19,12 @@ func init() {
 		// 在这里执行您的任务代码
 		fmt.Println("定时任务执行时间:", time.Now())
 
-		for i := 0; i < 200; i++ {
-			go func() {
-				user.NewUser().GetByAccount(tools.CreateRandomString(10))
-			}()
-		}
+		// TODO
+		// for i := 0; i < 200; i++ {
+		// 	go func() {
+		// 		user.NewUser().GetByAccount(tools.CreateRandomString(10))
+		// 	}()
+		// }
 	})
 
 	if err != nil {

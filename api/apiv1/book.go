@@ -14,12 +14,11 @@ func NewBookController() *BookController {
 	return &BookController{}
 }
 
-
 func (b *BookController) Book(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-        "code": 200,
-        "msg":  "success",
-    })
+		"code": 200,
+		"msg":  "success",
+	})
 }
 
 func (b *BookController) BookList(c *gin.Context) {
