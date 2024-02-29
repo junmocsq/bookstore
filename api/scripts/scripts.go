@@ -15,16 +15,16 @@ func init() {
 	c := cron.New()
 
 	// 添加定时任务，每一段时间执行一次
-	_, err := c.AddFunc("*/1 * * * *", func() {
+	_, err := c.AddFunc("*/10 * * * *", func() {
 		// 在这里执行您的任务代码
 		fmt.Println("定时任务执行时间:", time.Now())
 
 		// TODO
-		// for i := 0; i < 200; i++ {
-		// 	go func() {
-		// 		user.NewUser().GetByAccount(tools.CreateRandomString(10))
-		// 	}()
-		// }
+		for i := 0; i < 20; i++ {
+			go func() {
+				user.NewUser().GetByAccount(tools.CreateRandomString(10))
+			}()
+		}
 	})
 
 	if err != nil {

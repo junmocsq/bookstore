@@ -5,7 +5,7 @@ go 1.21.5
 require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-ini/ini v1.67.0
-	github.com/junmocsq/jlib v0.0.0-20240227083707-d6d8e8a21050
+	github.com/junmocsq/jlib v0.0.2
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/smartystreets/goconvey v1.8.1

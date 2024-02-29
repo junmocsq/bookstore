@@ -1,8 +1,11 @@
 package book
 
 import (
+	"errors"
+
 	"github.com/junmocsq/bookstore/api/models/common"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 type Chapter struct {
@@ -39,8 +42,10 @@ func (c *Chapter) Add(bid int32, title, summary string) (int32, error) {
 func (c *Chapter) Update(id, bid int32, title, summary string) int32 {
 	var db = common.GetDB()
 	var chapter = Chapter{ID: id, Title: title, Summary: summary}
-
-	stmt := db.DryRun().Model(&chapter).Updates(map[string]interface{}{"title": title, "summary": summary}).Statement
+	stmt := db.DryRun().Model(&chapter).Updates(Chapter{
+		Title:   title,
+		Summary: summary,
+	}).Statement
 	n, err := db.SetTag(c.Tag(bid)).PrepareSql(stmt.SQL.String(), stmt.Vars...).EXEC()
 	if err != nil {
 		logrus.WithField("model", "chapter_update").Error(err)
@@ -56,8 +61,22 @@ func (c *Chapter) GetByBid(bid int32) []*Chapter {
 	stmt := db.DryRun().Where("bid = ?", bid).Find(&chapters).Statement
 	err := db.SetTag(c.Tag(bid)).PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&chapters)
 	if err != nil {
-		logrus.WithField("model", "chapter_GetByBid").Error(err)
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			logrus.WithField("model", "chapter_GetByBid").Error(err)
+		}
 		return nil
 	}
 	return chapters
+}
+
+func (c *Chapter) DeleteById(id, bid int32) error {
+	// TODO 校验大章是否被使用，被使用不能删除
+	var db = common.GetDB()
+	stmt := db.DryRun().Where("id = ?", id).Delete(&Chapter{}).Statement
+	_, err := db.SetTag(c.Tag(bid)).PrepareSql(stmt.SQL.String(), stmt.Vars...).EXEC()
+	if err != nil {
+		logrus.WithField("model", "chapter_DeleteById").Error(err)
+		return err
+	}
+	return nil
 }

@@ -24,6 +24,46 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/apiv1/book/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "book"
+                ],
+                "summary": "获取图书详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "图书id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/apiv1.User"
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/apiv1/user": {
             "get": {
                 "produces": [
@@ -69,8 +109,8 @@ const docTemplate = `{
                 "summary": "修改数据",
                 "parameters": [
                     {
-                        "description": "账号",
-                        "name": "account",
+                        "description": "修改数据",
+                        "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
