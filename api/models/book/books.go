@@ -261,3 +261,29 @@ func (b *Book) updateNum(id, num int32, field string) (int32, error) {
 func (b *Book) UpdateSectionNum(id, num int32) (int32, error) {
 	return b.updateNum(id, num, "section_num")
 }
+
+func (b *Book) GetAllByField(page, size int, field string) []Book {
+	var db = common.GetDB()
+	var books []Book
+	stmt := db.DryRun().Select("id", field).Offset((page - 1) * size).Limit(size).Find(&books).Statement
+	err := db.PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&books)
+	if err != nil {
+		logrus.WithField("model", "book_GetAllByField").Error(err)
+		return nil
+	}
+	return books
+}
+
+func (b *Book) GetBookByName(name string) *Book {
+	var book Book
+	var db = common.GetDB()
+	stmt := db.DryRun().Where("title =?", name).Find(&book).Statement
+	err := db.PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&book)
+	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			logrus.WithField("model", "book_GetBookByName").Error(err)
+		}
+		return nil
+	}
+	return &book
+}

@@ -2,6 +2,7 @@ package apiv1
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/junmocsq/bookstore/api/tools"
 	"github.com/sirupsen/logrus"
 )
 
@@ -33,4 +34,11 @@ type Response struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data"`
+}
+
+func response(code int, data interface{}) gin.H {
+	if code != 200 {
+		logrus.WithField("response", "code").Error(tools.GetMsg(code))
+	}
+	return gin.H{"code": code, "msg": tools.GetMsg(code), "data": data}
 }

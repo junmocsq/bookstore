@@ -26,6 +26,26 @@ var m = map[string]map[int8]string{
 		1: "收入",
 		2: "支出",
 	},
+	"book_status": {
+		1: "上架",
+		2: "审查",
+		3: "下架",
+	},
+	"book_process": {
+		1: "连载",
+		2: "完结",
+		3: "停更",
+	},
+	"book_is_pay": {
+		1: "付费",
+		2: "免费",
+	},
+	"section_status": {
+		1: "发布",
+		2: "定时发布",
+		3: "审查",
+		4: "下架",
+	},
 }
 
 func Mapping(key string, id int8) string {

@@ -62,8 +62,8 @@ github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnr
 github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
 github.com/jtolds/gls v4.20.0+incompatible h1:xdiiI2gbIgH/gLH7ADydsJ1uDOEzR8yvV7C0MuV77Wo=
 github.com/jtolds/gls v4.20.0+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfVYBRgL+9YlvaHOwJU=
-github.com/junmocsq/jlib v0.0.2 h1:6narkFGNp5AB90XNVQJV2zjcX08yHMS3+uF6X9b3sow=
-github.com/junmocsq/jlib v0.0.2/go.mod h1:fyP6ZbMgSYZXlFKNuMlUOugKHwZNYimvWGhbhZJX7kQ=
+github.com/junmocsq/jlib v0.0.3 h1:Lh1o8i2npAnwdUVOju4P3nIa50IxlYIKCwLdOrNfPbA=
+github.com/junmocsq/jlib v0.0.3/go.mod h1:fyP6ZbMgSYZXlFKNuMlUOugKHwZNYimvWGhbhZJX7kQ=
 github.com/klauspost/cpuid/v2 v2.0.9/go.mod h1:FInQzS24/EEf25PyTYn52gqo7WaD8xa0213Md/qVLRg=
 github.com/klauspost/cpuid/v2 v2.2.7 h1:ZWSB3igEs+d0qvnxR/ZBzXVmxkgt8DdzP6m9pfuVLDM=
 github.com/klauspost/cpuid/v2 v2.2.7/go.mod h1:Lcz8mBdAVJIBVzewtcLocK12l3Y+JytZYpaMropDUws=

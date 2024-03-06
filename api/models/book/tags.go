@@ -95,9 +95,9 @@ func (t *Tag) GetByName(name string) *Tag {
 	return &tag
 }
 
-func (t *Tag) GetAll() []*Tag {
+func (t *Tag) GetAll() []Tag {
 	var db = common.GetDB()
-	var tags []*Tag
+	var tags []Tag
 	stmt := db.DryRun().Find(&tags).Statement
 	err := db.SetTag(t.Tag()).PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&tags)
 	if err != nil {

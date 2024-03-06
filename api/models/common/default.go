@@ -43,6 +43,6 @@ func init() {
 
 }
 
-func GetDB(dbname ...string) *dbcache.Dao {
+func GetDB(dbname ...string) dbcache.Daoer {
 	return dbcache.NewDb(dbname...)
 }

@@ -28,6 +28,16 @@ func NewChapter() *Chapter {
 }
 
 func (c *Chapter) Add(bid int32, title, summary string) (int32, error) {
+	if title == "" {
+		return 0, errors.New("大章名不能为空")
+
+	}
+	cs := c.GetChaptersByBid(bid)
+	for _, v := range cs {
+		if v.Title == title {
+			return v.ID, nil
+		}
+	}
 	var db = common.GetDB()
 	var chapter = Chapter{Bid: bid, Title: title, Summary: summary}
 	stmt := db.DryRun().Create(&chapter).Statement
@@ -54,8 +64,8 @@ func (c *Chapter) Update(id, bid int32, title, summary string) int32 {
 	return int32(n)
 }
 
-func (c *Chapter) GetByBid(bid int32) []*Chapter {
-	var chapters []*Chapter
+func (c *Chapter) GetChaptersByBid(bid int32) []Chapter {
+	var chapters []Chapter
 	var db = common.GetDB()
 
 	stmt := db.DryRun().Where("bid = ?", bid).Find(&chapters).Statement
@@ -70,7 +80,12 @@ func (c *Chapter) GetByBid(bid int32) []*Chapter {
 }
 
 func (c *Chapter) DeleteById(id, bid int32) error {
-	// TODO 校验大章是否被使用，被使用不能删除
+	sections := NewSection().GetSectionsByBid(bid)
+	for _, v := range sections {
+		if v.Cid == id {
+			return errors.New("大章被使用，不能删除")
+		}
+	}
 	var db = common.GetDB()
 	stmt := db.DryRun().Where("id = ?", id).Delete(&Chapter{}).Statement
 	_, err := db.SetTag(c.Tag(bid)).PrepareSql(stmt.SQL.String(), stmt.Vars...).EXEC()

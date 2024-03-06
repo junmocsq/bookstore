@@ -18,6 +18,167 @@
     "host": "127.0.0.1:8080",
     "basePath": "/",
     "paths": {
+        "/apiv1/book/catalog/{bid}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "book"
+                ],
+                "summary": "获取图书目录",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "图书id",
+                        "name": "bid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/services.SSection"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/apiv1/book/categories": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "book"
+                ],
+                "summary": "获取小说分类",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/services.SCategory"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/apiv1/book/section/{bid}/{sid}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "book"
+                ],
+                "summary": "获取章节内容",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "图书id",
+                        "name": "bid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "小节id",
+                        "name": "sid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/services.SSection"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/apiv1/book/tags": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "book"
+                ],
+                "summary": "获取小说分类",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/services.STag"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/apiv1/book/{id}": {
             "get": {
                 "produces": [
@@ -40,7 +201,7 @@
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/apiv1.User"
+                            "$ref": "#/definitions/services.SBook"
                         }
                     },
                     "400": {
@@ -199,6 +360,271 @@
                     "type": "string"
                 },
                 "whats_up": {
+                    "type": "string"
+                }
+            }
+        },
+        "book.Chapter": {
+            "type": "object",
+            "properties": {
+                "bid": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "summary": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "book.Section": {
+            "type": "object",
+            "properties": {
+                "bananas": {
+                    "type": "integer"
+                },
+                "bid": {
+                    "type": "integer"
+                },
+                "cid": {
+                    "type": "integer"
+                },
+                "content_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "idx": {
+                    "type": "integer"
+                },
+                "publish_time": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "integer"
+                },
+                "wordnum": {
+                    "type": "integer"
+                }
+            }
+        },
+        "book.Tag": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "services.SBook": {
+            "type": "object",
+            "properties": {
+                "aid": {
+                    "type": "integer"
+                },
+                "apples": {
+                    "type": "integer"
+                },
+                "category_id": {
+                    "type": "integer"
+                },
+                "category_str": {
+                    "type": "string"
+                },
+                "clicks": {
+                    "type": "integer"
+                },
+                "comments": {
+                    "type": "integer"
+                },
+                "cover": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "created_at_str": {
+                    "type": "string"
+                },
+                "favorites": {
+                    "type": "integer"
+                },
+                "hot": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_pay": {
+                    "type": "integer"
+                },
+                "is_pay_str": {
+                    "type": "string"
+                },
+                "last_section": {
+                    "description": "最新章节",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/book.Section"
+                        }
+                    ]
+                },
+                "last_section_id": {
+                    "type": "integer"
+                },
+                "last_section_time": {
+                    "type": "integer"
+                },
+                "likes": {
+                    "type": "integer"
+                },
+                "popular": {
+                    "type": "integer"
+                },
+                "process": {
+                    "type": "integer"
+                },
+                "process_str": {
+                    "type": "string"
+                },
+                "section_num": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "status_str": {
+                    "type": "string"
+                },
+                "summary": {
+                    "type": "string"
+                },
+                "tag_ids": {
+                    "type": "string"
+                },
+                "tag_ids_arr": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/book.Tag"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "integer"
+                },
+                "updated_at_str": {
+                    "type": "string"
+                }
+            }
+        },
+        "services.SCategory": {
+            "type": "object",
+            "properties": {
+                "childs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/services.SCategory"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent": {
+                    "$ref": "#/definitions/services.SCategory"
+                }
+            }
+        },
+        "services.SSection": {
+            "type": "object",
+            "properties": {
+                "bananas": {
+                    "type": "integer"
+                },
+                "bid": {
+                    "type": "integer"
+                },
+                "chapter": {
+                    "$ref": "#/definitions/book.Chapter"
+                },
+                "cid": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "content_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "created_at_str": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "idx": {
+                    "type": "integer"
+                },
+                "publish_time": {
+                    "type": "integer"
+                },
+                "publish_time_str": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "status_str": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "integer"
+                },
+                "updated_at_str": {
+                    "type": "string"
+                },
+                "wordnum": {
+                    "type": "integer"
+                }
+            }
+        },
+        "services.STag": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
                     "type": "string"
                 }
             }

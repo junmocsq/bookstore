@@ -1,8 +1,13 @@
 package book
 
 import (
-	. "github.com/smartystreets/goconvey/convey"
+	"encoding/json"
+	"os"
+	"path"
+	"runtime"
 	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestBook(t *testing.T) {
@@ -16,6 +21,8 @@ func TestBook(t *testing.T) {
 		{1, "霍乱时期的爱情", "霍乱时期的爱情简介", "", 1, []int32{1, 2, 3}},
 		{5, "活着", "或者的故事", "", 1, []int32{1, 2, 3}},
 		{7, "围城", "城里的人想出去，城外的人想进来", "", 1, []int32{1, 2, 3}},
+		{8, "大秦帝国", "历史", "", 1, []int32{1, 2, 3}},
+		{9, "康雍乾帝王", "清朝历史", "", 1, []int32{1, 2, 3}},
 	}
 
 	b := NewBook()
@@ -86,5 +93,58 @@ func TestBook(t *testing.T) {
 			So(err, ShouldNotBeNil)
 		})
 	})
+
+}
+
+func Test(t *testing.T) {
+	t.SkipNow()
+	_, filename, _, _ := runtime.Caller(0)
+	file := path.Dir(filename) + "/../../conf/novel-list.txt"
+	content, err := os.ReadFile(file)
+	if err != nil {
+		panic(err)
+	}
+	type tempBook struct {
+		Books []struct {
+			BookInfo struct {
+				Title      string `json:"title"`
+				Intro      string `json:"intro"`
+				Author     string `json:"author"`
+				Categories []struct {
+					Title string `json:"title"`
+				} `json:"categories"`
+			} `json:"bookInfo" `
+		} `json:"books"`
+	}
+	var res tempBook
+	json.Unmarshal(content, &res)
+	// t.Log(res)
+
+	for _, v := range res.Books {
+		title := v.BookInfo.Title
+		intro := v.BookInfo.Intro
+		author := v.BookInfo.Author
+		var aid int32 = 0
+		existAuthor := NewAuthor().checkName(author)
+
+		if existAuthor == nil {
+			aid, err = NewAuthor().Add(author, "", "", "")
+			if err != nil {
+				t.Fatal(err)
+			}
+		} else {
+			aid = existAuthor.ID
+		}
+		t.Log(aid)
+		temp := []rune(intro)
+		if len(temp) > 100 {
+			intro = string(temp[:100])
+		}
+		n, err := NewBook().Add(aid, title, intro, "", 1, []int32{})
+		if err != nil {
+			t.Error(err)
+		}
+		t.Log(aid, n)
+	}
 
 }

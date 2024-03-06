@@ -53,6 +53,13 @@ func main() {
 	{
 		auth.GET("/user", apiv1.NewUserController().User)
 		auth.POST("/user/update", apiv1.NewUserController().Update)
+
+		auth.GET("/book/:id", apiv1.NewBookController().Book)
+		auth.GET("/book/catalog/:bid", apiv1.NewSectionController().Catalog)
+		auth.GET("/book/section/:bid/:sid", apiv1.NewSectionController().Section)
+		auth.GET("/book/categories", apiv1.NewBookController().Categories)
+		auth.GET("/book/tags", apiv1.NewBookController().Tags)
+
 	}
 
 	r.Run() // listen and serve on 0.0.0.0:8080

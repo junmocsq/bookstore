@@ -61,7 +61,7 @@ func (c *Category) Update(id int32, name string, pid int32, idx int32, status in
 func (c *Category) GetAll() []Category {
 	var db = common.GetDB()
 	var categories []Category
-	stmt := db.DryRun().Find(&categories).Statement
+	stmt := db.DryRun().Find(&categories).Order("idx asc,id asc").Statement
 	err := db.SetTag(c.Tag()).PrepareSql(stmt.SQL.String(), stmt.Vars...).Fetch(&categories)
 	if err != nil {
 		logrus.WithField("model", "category_GetAll").Error(err)
